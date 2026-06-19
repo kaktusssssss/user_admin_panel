@@ -25,4 +25,11 @@ function logout() {
     header('Location: login.php');
     exit();
 }
-?>
+
+/**
+ * Check if user is logged in
+ * @return bool
+ */
+function isLoggedIn() {
+    return isset($_SESSION['user_id']);
+}

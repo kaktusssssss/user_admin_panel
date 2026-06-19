@@ -1,0 +1,29 @@
+# Composer
+/vendor/
+composer.lock
+
+# IDE и редакторы
+/.vscode/
+/.idea/
+.DS_Store
+*.sublime-workspace
+*.sublime-project
+
+# Логи и кэш
+/var/
+/logs/
+*.log
+
+# Системные файлы
+Thumbs.db
+.DS_Store
+.idea/
+
+# Файлы окружения
+.env
+.env.local
+.env.*.local
+
+# Временные файлы
+*.tmp
+*.cache
