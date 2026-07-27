@@ -1,35 +1,36 @@
 <?php
-/**
- * Authentication helper functions
- */
 
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/UserManager.php';
+namespace App;
 
-/**
- * Require authentication - redirect to login if not authenticated
- */
-function requireAuth() {
-    if (!isLoggedIn()) {
-        header('Location: login.php');
+class Auth
+{
+    /**
+     * Check if user is logged in
+     */
+    public static function isLoggedIn(): bool
+    {
+        return isset($_SESSION['user_id']);
+    }
+
+    /**
+     * Require authentication - redirect to login if not authenticated
+     */
+    public static function requireAuth(): void
+    {
+        if (!self::isLoggedIn()) {
+            header('Location: /login');
+            exit();
+        }
+    }
+
+    /**
+     * Logout user
+     */
+    public static function logout(): void
+    {
+        $_SESSION = [];
+        session_destroy();
+        header('Location: /login');
         exit();
     }
-}
-
-/**
- * Logout user
- */
-function logout() {
-    $_SESSION = [];
-    session_destroy();
-    header('Location: login.php');
-    exit();
-}
-
-/**
- * Check if user is logged in
- * @return bool
- */
-function isLoggedIn() {
-    return isset($_SESSION['user_id']);
 }

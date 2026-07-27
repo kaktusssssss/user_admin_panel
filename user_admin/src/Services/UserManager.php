@@ -3,6 +3,10 @@
  * UserManager class handles all user-related database operations
  */
 
+declare(strict_types=1);
+
+namespace App\Validators;
+
 class UserManager {
     private $pdo;
     
