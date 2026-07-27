@@ -6,7 +6,7 @@
 require_once __DIR__ . '/includes/auth.php';
 
 // Clear all session data
-$_SESSION = array();
+$_SESSION = [];
 
 // Destroy the session cookie
 if (ini_get("session.use_cookies")) {

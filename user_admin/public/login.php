@@ -1,39 +1,24 @@
 <?php
-require_once __DIR__ . '/includes/config.php';
-require_once __DIR__ . '/includes/UserManager.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-// If already logged in, redirect to user list
-if (isLoggedIn()) {
-    header('Location: index.php');
+use App\Auth;
+use App\Services\UserManager;
+
+// Если уже залогинен — отправляем на главную
+if (Auth::isLoggedIn()) {
+    header('Location: /');
     exit();
 }
 
-$error = '';
-$userManager = new UserManager(getDBConnection());
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $login = trim($_POST['login'] ?? '');
-    $password = $_POST['password'] ?? '';
-    
-    if (empty($login) || empty($password)) {
-        $error = 'Please enter both login and password';
-    } else {
-        if ($userManager->authenticate($login, $password)) {
-            header('Location: index.php');
-            exit();
-        } else {
-            $error = 'Invalid login or password';
-        }
-    }
-}
+$error = $_SESSION['login_error'] ?? '';
+unset($_SESSION['login_error']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= SITE_NAME ?> - Login</title>
-    <link rel="stylesheet" href="\test-task-sib\user_admin\css\style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <div class="login-container">
@@ -45,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
             <?php endif; ?>
             
-            <form method="POST" class="login-form">
+            <form method="POST" action="/login" class="login-form">
                 <div class="form-group">
                     <label for="login">Login</label>
                     <input type="text" id="login" name="login" required autofocus>
@@ -56,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="password" id="password" name="password" required>
                 </div>
                 
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+                <button type="submit" class="btn btn-primary">Login</button>
             </form>
             
             <div class="login-info">

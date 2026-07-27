@@ -5,12 +5,14 @@
 
 declare(strict_types=1);
 
-namespace App\Validators;
+namespace App\Services;
+
+use PDO;
 
 class UserManager {
-    private $pdo;
+    private \PDO $pdo;
     
-    public function __construct($pdo) {
+    public function __construct(PDO $pdo) {
         $this->pdo = $pdo;
     }
     
@@ -22,7 +24,12 @@ class UserManager {
      * @param string $order
      * @return array
      */
-    public function getUsers($offset = 0, $limit = ITEMS_PER_PAGE, $sort_by = 'id', $order = 'ASC') {
+    public function getUsers(
+        int $offset, 
+        int $limit, 
+        string $sort_by = 'id', 
+        string $order = 'ASC'
+        ): array {
         $allowed_sort = ['id', 'login', 'first_name', 'last_name', 'birth_date'];
         $sort_by = in_array($sort_by, $allowed_sort) ? $sort_by : 'id';
         $order = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
