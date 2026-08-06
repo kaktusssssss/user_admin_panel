@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteBase /test-task-sib/user_admin/
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/index.php [QSA,L]

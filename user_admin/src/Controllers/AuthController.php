@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controllers;
 
@@ -19,11 +20,13 @@ class AuthController
     public function loginForm(): void
     {
         if (Auth::isLoggedIn()) {
-            header('Location: /users');
+            $config = require __DIR__ . '/../../config/app.php';
+            header('Location: ' . $config['base_url'] . '/users');
             exit();
         }
 
-        require __DIR__ . '/../../public/login.php';
+        // Показываем шаблон логина
+        require __DIR__ . '/../../templates/auth/login.php';
     }
 
     // Обработать логин
@@ -34,20 +37,20 @@ class AuthController
 
         if (empty($login) || empty($password)) {
             $_SESSION['login_error'] = 'Please enter both login and password';
-            header('Location: /login');
+            $config = require __DIR__ . '/../../config/app.php';
+            header('Location: ' . $config['base_url'] . '/login');
             exit();
         }
 
-        $pdo = require __DIR__ . '/../../config/database.php';
-        $userManager = new UserManager($pdo);
-
-        if ($userManager->authenticate($login, $password)) {
+        if ($this->userManager->authenticate($login, $password)) {
             unset($_SESSION['login_error']);
-            header('Location: /');
+            $config = require __DIR__ . '/../../config/app.php';
+            header('Location: ' . $config['base_url'] . '/');
             exit();
         } else {
             $_SESSION['login_error'] = 'Invalid login or password';
-            header('Location: /login');
+            $config = require __DIR__ . '/../../config/app.php';
+            header('Location: ' . $config['base_url'] . '/login');
             exit();
         }
     }
@@ -56,7 +59,8 @@ class AuthController
     public function logout(): void
     {
         Auth::logout();
-        header('Location: /login');
+        $config = require __DIR__ . '/../../config/app.php';
+        header('Location: ' . $config['base_url'] . '/login');
         exit;
     }
 }

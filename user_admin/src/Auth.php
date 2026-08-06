@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App;
 
@@ -7,6 +8,7 @@ class Auth
     /**
      * Check if user is logged in
      */
+
     public static function isLoggedIn(): bool
     {
         return isset($_SESSION['user_id']);
@@ -18,7 +20,8 @@ class Auth
     public static function requireAuth(): void
     {
         if (!self::isLoggedIn()) {
-            header('Location: /login');
+            $config = require __DIR__ . '/../config/app.php';
+            header('Location: ' . $config['base_url'] . '/login');
             exit();
         }
     }
@@ -30,7 +33,8 @@ class Auth
     {
         $_SESSION = [];
         session_destroy();
-        header('Location: /login');
+        $config = require __DIR__ . '/../config/app.php';
+        header('Location: ' . $config['base_url'] . '/login');
         exit();
     }
 }

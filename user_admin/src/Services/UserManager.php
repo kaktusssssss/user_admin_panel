@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use PDO;
+use App\Models\User;
 
 class UserManager {
     private \PDO $pdo;
@@ -24,27 +25,39 @@ class UserManager {
      * @param string $order
      * @return array
      */
-    public function getUsers(
-        int $offset, 
-        int $limit, 
-        string $sort_by = 'id', 
-        string $order = 'ASC'
-        ): array {
+    public function getUsers(int $offset, int $limit, string $sort_by = 'id', string $order = 'ASC'): array
+    {
         $allowed_sort = ['id', 'login', 'first_name', 'last_name', 'birth_date'];
         $sort_by = in_array($sort_by, $allowed_sort) ? $sort_by : 'id';
         $order = strtoupper($order) === 'DESC' ? 'DESC' : 'ASC';
-        
+
         $sql = "SELECT id, login, first_name, last_name, gender, birth_date, created_at 
                 FROM users 
                 ORDER BY $sort_by $order 
                 LIMIT :limit OFFSET :offset";
-        
+
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
-        
-        return $stmt->fetchAll();
+
+        $rows = $stmt->fetchAll();
+        $users = [];
+
+        foreach ($rows as $row) {
+            $users[] = new User(
+                $row['id'],
+                $row['login'],
+                $row['password'] ?? null,
+                $row['first_name'],
+                $row['last_name'],
+                $row['gender'],
+                $row['birth_date'],
+                $row['created_at']
+            );
+        }
+
+        return $users;
     }
     
     /**
@@ -61,10 +74,26 @@ class UserManager {
      * @param int $id
      * @return array|false
      */
-    public function getUserById($id) {
+    public function getUserById(int $id): ?User
+    {
         $stmt = $this->pdo->prepare("SELECT * FROM users WHERE id = :id");
         $stmt->execute([':id' => $id]);
-        return $stmt->fetch();
+        $row = $stmt->fetch();
+
+        if (!$row) {
+            return null;
+        }
+
+        return new User(
+            $row['id'],
+            $row['login'],
+            $row['password'],
+            $row['first_name'],
+            $row['last_name'],
+            $row['gender'],
+            $row['birth_date'],
+            $row['created_at']
+        );
     }
     
     /**

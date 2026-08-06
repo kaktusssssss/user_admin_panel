@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Core;
 
@@ -17,16 +18,8 @@ class Router
 
     public function dispatch(string $method, string $uri): void
     {
-        foreach ($this->routes as $route) {
-            if ($route['method'] === $method && $route['path'] === $uri) {
-                [$controllerClass, $action] = $route['controller'];
-                $controller = new $controllerClass();
-                $controller->$action();
-                return;
-            }
-        }
-
-        http_response_code(404);
-        echo "404 Not Found";
+            echo "Method: $method<br>";
+    echo "URI: $uri<br>";
+    exit;
     }
 }
